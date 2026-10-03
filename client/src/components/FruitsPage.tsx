@@ -1,38 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import { useDebouncedValue } from '../hooks/useDebouncedValue.ts'
 import { useFruits } from '../hooks/useFruits.ts'
-import { FruitList } from './FruitList.tsx'
+import { FruitsContent } from './FruitsContent.tsx'
 import { SearchInput } from './SearchInput.tsx'
 
+const SEARCH_DEBOUNCE_MS = 300
+
 export function FruitsPage() {
-  
-  const state = useFruits()
-  console.log('rendering...', state);
   const [query, setQuery] = useState('')
+  const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS)
+  const { fruits, error, isLoading } = useFruits(debouncedQuery.trim())
+  console.log('rendering...', { fruits, error, isLoading });
 
-  // Derived from fetched data + query; never stored in state.
-  const filteredFruits = useMemo(() => {
-    if (state.status !== 'success') return []
-    const q = query.trim().toLowerCase()
-    if (!q) return state.fruits
-    return state.fruits.filter((fruit) => fruit.name.toLowerCase().includes(q))
-  }, [state, query])
-
-  if (state.status === 'loading') {
-    return <p role="status">Loading fruits...</p>
-  }
-
-  if (state.status === 'error') {
-    return (
-      <p role="alert" className="error">
-        Failed to load fruits: {state.error}
-      </p>
-    )
-  }
-
+  // Siblings: the input keeps its place in the tree whatever state the content is in.
   return (
     <>
       <SearchInput value={query} onChange={setQuery} />
-      <FruitList fruits={filteredFruits} />
+      <FruitsContent fruits={fruits} error={error} isLoading={isLoading} />
     </>
   )
 }

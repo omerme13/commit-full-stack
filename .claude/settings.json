@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm src/routes/fruits.ts)",
+      "Bash(mkdir -p src/controllers src/services src/middleware src/errors)",
+      "Bash(ls -R src)"
+    ]
+  }
+}
