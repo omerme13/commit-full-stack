@@ -1,0 +1,21 @@
+import type { Fruit } from '../types.ts'
+
+interface FruitListProps {
+  fruits: Fruit[]
+}
+
+export function FruitList({ fruits }: FruitListProps) {
+  if (fruits.length === 0) {
+    return <p>No fruits found.</p>
+  }
+
+  return (
+    <ul className="fruit-list">
+      {fruits.map((fruit) => (
+        <li key={fruit.id} className="fruit-card">
+          {fruit.name}
+        </li>
+      ))}
+    </ul>
+  )
+}
